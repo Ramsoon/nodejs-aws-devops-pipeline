@@ -1,0 +1,21 @@
+services:
+
+  app:
+    image: ${DOCKERHUB_USERNAME}/credpal-app:latest
+    container_name: node_app
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    container_name: redis_db
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
