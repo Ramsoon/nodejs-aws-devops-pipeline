@@ -1,5 +1,6 @@
 provider "aws" {
   region = var.region
+  profile = "admin"
 }
 
 
@@ -20,6 +21,7 @@ module "ec2_modul1" {
 module "acm" {
   source = "./modules/acm"
 
+  count       = var.use_acm ? 1 : 0
   domain_name = var.domain_name
 }
 
@@ -30,13 +32,19 @@ module "alb" {
   public_subnets   = [module.sg_module.subnet1_id_output, module.sg_module.subnet2_id_output]
   security_group_id = module.sg_module.sg_id_output
   instance_id       = module.ec2_modul1.instance_id
-  certificate_arn = module.acm.certificate_arn
+  certificate_arn = var.use_acm ? module.acm[0].certificate_arn : null
 }
 
 
 
 output "load_balancer_dns" {
   value = module.alb.alb_dns
+}
+
+# optional output only when ACM is used
+output "certificate_arn" {
+  value       = var.use_acm ? module.acm[0].certificate_arn : null
+  description = "ARN of the generated ACM certificate (if enabled)"
 }
 
 output "ec2_public_ip" {

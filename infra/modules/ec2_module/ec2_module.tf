@@ -35,6 +35,9 @@ resource "aws_instance" "myec2" {
   subnet_id = "${var.varsub}"
   key_name = "${var.keyn}"
 
+  # ensure the instance gets a public IP in a non-default subnet
+  associate_public_ip_address = true
+
   tags = {
     Name = "EC2_Name_Instance_${module.shared_vars.env_suffix}"
   }
