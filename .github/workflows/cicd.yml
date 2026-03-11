@@ -17,12 +17,11 @@ on:
           - apply
           - destroy
 
-  jobs:
-
+jobs:
   build-and-push:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
+    steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -41,14 +40,14 @@ on:
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/credpal-app:latest
 
   terraform:
-  runs-on: ubuntu-latest
-  needs: build-and-push
+    runs-on: ubuntu-latest
+    needs: build-and-push
 
-  defaults:
-    run:
-      working-directory: infra
+    defaults:
+      run:
+        working-directory: infra
 
-  steps:
+    steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -81,11 +80,11 @@ on:
         echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
 
   deploy:
-  needs: terraform
-  runs-on: ubuntu-latest
-  environment: production
+    needs: terraform
+    runs-on: ubuntu-latest
+    environment: production
 
-  steps:
+    steps:
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.3
       with:
